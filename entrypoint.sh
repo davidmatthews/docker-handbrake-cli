@@ -12,7 +12,7 @@ CRF_VALUE=$3  # Optional
 
 # Extract filename without extension
 BASENAME=$(basename -- "$INPUT_FILE")
-EXTENSION="${BASENAME##*.}"
+EXTENSION=.mkv
 FILENAME="${BASENAME%.*}"
 
 # Ensure input file exists
