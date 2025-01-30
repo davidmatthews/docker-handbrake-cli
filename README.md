@@ -1,6 +1,8 @@
 # Docker Handbrake CLI
 A Docker container to encode with x265 using high-quality presets in Handbrake.
 
+NOTE: These encodes will be slow but will result in high-quality output files, relative to their size.
+
 ## Usage
 `docker run --rm -v "$(pwd)":/data davidmatthews/handbrake-cli <input_file> [preset_name] [crf_value]`
 
