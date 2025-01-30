@@ -25,3 +25,7 @@ If no preset is given, the 1080p preset will be used by default.
 
 ### 4K Animation preset with default CRF
 `docker run --rm -v "$(pwd)":/data davidmatthews/handbrake-cli video.mkv 4k-animation`
+
+## Links
+[GitHub](https://github.com/davidmatthews/docker-handbrake-cli)
+[Docker Hub](https://hub.docker.com/r/davidmatthews/handbrake-cli)
