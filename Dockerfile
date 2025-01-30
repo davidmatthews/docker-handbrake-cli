@@ -7,7 +7,7 @@ RUN apt-get update && apt-get install -y \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
-WORKDIR /workspace
+WORKDIR /data
 
 # Copy HandBrake presets into the container
 COPY presets/*.json /root/.config/HandBrake/
