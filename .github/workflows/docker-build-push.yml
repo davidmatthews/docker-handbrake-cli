@@ -41,6 +41,5 @@ jobs:
         with:
           context: .
           push: true
-          tags: |
-            davidmatthews/handbrake-cli:latest
+          tags: ${{ vars.DOCKERHUB_REPO }}:latest
           platforms: linux/amd64,linux/arm64
