@@ -28,4 +28,5 @@ If no preset is given, the 1080p preset will be used by default.
 
 ## Links
 [GitHub](https://github.com/davidmatthews/docker-handbrake-cli)
+
 [Docker Hub](https://hub.docker.com/r/davidmatthews/handbrake-cli)
