@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Ensure input arguments are provided
-if [ "$#" -lt 2 ]; then
+if [ "$#" -lt 1 ]; then
     echo "Usage: entrypoint.sh <input_file> [preset_name] [crf_value]"
     exit 1
 fi
