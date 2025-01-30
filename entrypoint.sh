@@ -12,7 +12,7 @@ CRF_VALUE=$3  # Optional
 
 # Extract filename without extension
 BASENAME=$(basename -- "$INPUT_FILE")
-EXTENSION=.mkv
+EXTENSION="mkv"
 FILENAME="${BASENAME%.*}"
 
 # Ensure input file exists
@@ -26,17 +26,17 @@ if [ -z "$PRESET_NAME" ]; then
     PRESET_NAME="1080p"
 fi
 
-# Determine output file name based on CRF value presence
+# Determine output file name
 if [ -n "$CRF_VALUE" ]; then
-    OUTPUT_FILE="${FILENAME}-CRF${CRF_VALUE}.${EXTENSION}"
+    OUTPUT_FILE="${FILENAME}-${PRESET_NAME}.CRF${CRF_VALUE}.${EXTENSION}"
     CRF_OPTION="-q $CRF_VALUE"
 else
-    OUTPUT_FILE="${FILENAME}-CRF-default.${EXTENSION}"
+    OUTPUT_FILE="${FILENAME}-${PRESET_NAME}.${EXTENSION}"
     CRF_OPTION=""  # No CRF override, uses preset default
 fi
 
 # Run HandBrakeCLI with optional CRF value
-HandBrakeCLI -i "$INPUT_FILE" -o "$OUTPUT_FILE" --preset-import-file /root/.config/HandBrake/"$PRESET_NAME".json $CRF_OPTION
+HandBrakeCLI -i "$INPUT_FILE" -o "$OUTPUT_FILE" --preset-import-file /root/.config/HandBrake/"$PRESET_NAME".json --preset "$PRESET_NAME" $CRF_OPTION
 
 # Inform user of output
 echo "Encoding complete: $OUTPUT_FILE"
