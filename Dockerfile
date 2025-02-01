@@ -1,10 +1,5 @@
 # Use a multi-arch base image
-FROM debian:stable-slim
-
-# Install dependencies and HandBrake CLI
-RUN apt-get update && apt-get install -y \
-    handbrake-cli \
-    && rm -rf /var/lib/apt/lists/*
+FROM jlesage/handbrake:latest
 
 # Set working directory
 WORKDIR /data
