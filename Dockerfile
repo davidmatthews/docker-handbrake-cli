@@ -41,6 +41,10 @@ WORKDIR /build
 RUN git clone https://github.com/HandBrake/HandBrake.git
 WORKDIR /build/HandBrake
 
+# Checkout latest 1.10.x release
+RUN git fetch --tags \
+    && git checkout $(git tag -l | grep -E '^1\.10\.[0-9]+$' | tail -n 1)
+
 # Build
 RUN ./configure --disable-gtk --launch-jobs=$(nproc) --launch
 
