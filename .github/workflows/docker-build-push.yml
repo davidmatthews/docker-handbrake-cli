@@ -99,17 +99,30 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Build and push architecture image
+      - name: Set image tag
+        id: image
+        run: |
+          echo "tag=${{ vars.DOCKERHUB_REPO }}:${{ github.sha }}-${{ github.run_number }}-${{ matrix.arch }}" >> "$GITHUB_OUTPUT"
+
+      - name: Build image
         uses: docker/build-push-action@v6
         with:
           context: .
-          push: true
+          load: true
           platforms: ${{ matrix.platform }}
           build-args: |
             HANDBRAKE_VERSION=${{ needs.prepare.outputs.handbrake_version }}
-          tags: ${{ vars.DOCKERHUB_REPO }}:${{ github.sha }}-${{ github.run_number }}-${{ matrix.arch }}
+          tags: ${{ steps.image.outputs.tag }}
           cache-from: type=gha,scope=${{ matrix.arch }}
           cache-to: type=gha,mode=max,scope=${{ matrix.arch }}
+
+      - name: Test image
+        run: |
+          docker run --rm "${{ steps.image.outputs.tag }}" --version
+
+      - name: Push image
+        run: |
+          docker push "${{ steps.image.outputs.tag }}"
 
   manifest:
     name: Publish multi-architecture image
