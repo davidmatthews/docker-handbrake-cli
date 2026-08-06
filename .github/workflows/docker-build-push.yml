@@ -38,16 +38,44 @@ jobs:
           username: ${{ vars.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Determine Docker tag
+      - name: Determine HandBrake version
         id: vars
         run: |
+          version=$(git ls-remote --tags --refs https://github.com/HandBrake/HandBrake.git \
+            | sed 's#^.*/##' \
+            | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' \
+            | sort -V \
+            | tail -n 1)
+          test -n "$version"
+          echo "handbrake_version=$version" >> "$GITHUB_OUTPUT"
+
+      - name: Determine image tags
+        id: image-tags
+        env:
+          IMAGE: ${{ vars.DOCKERHUB_REPO }}
+          VERSION: ${{ steps.vars.outputs.handbrake_version }}
+        run: |
+          tags=""
+
+          # Scheduled builds always publish nightly. Commit builds, and the
+          # first scheduled build of a new HandBrake version, are promoted.
           if [[ "${{ github.event_name }}" == "schedule" ]]; then
-            echo "tag=nightly" >> $GITHUB_OUTPUT
-          elif [[ "${GITHUB_REF_NAME}" != "master" && "${GITHUB_REF_NAME}" != "main" ]]; then
-            echo "tag=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
-          else
-            echo "tag=latest" >> $GITHUB_OUTPUT
+            tags="${IMAGE}:nightly"
           fi
+
+          if [[ "${{ github.event_name }}" != "schedule" ]] \
+            || ! docker buildx imagetools inspect "${IMAGE}:${VERSION}" >/dev/null 2>&1; then
+            if [[ -n "$tags" ]]; then
+              tags+=$'\n'
+            fi
+            tags+="${IMAGE}:${VERSION}"$'\n'"${IMAGE}:latest"
+          fi
+
+          {
+            echo 'tags<<EOF'
+            echo "$tags"
+            echo EOF
+          } >> "$GITHUB_OUTPUT"
 
       # Build and push multi-arch image
       - name: Build and Push Docker Image
@@ -55,5 +83,7 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_REPO }}:${{ steps.vars.outputs.tag }}
+          build-args: |
+            HANDBRAKE_VERSION=${{ steps.vars.outputs.handbrake_version }}
+          tags: ${{ steps.image-tags.outputs.tags }}
           platforms: linux/amd64,linux/arm64

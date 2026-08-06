@@ -37,17 +37,23 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /build
 
+# The workflow resolves this to the newest stable HandBrake release.
+ARG HANDBRAKE_VERSION=""
+
 # Clone the HandBrake source repository and fetch its release tags.
 RUN git clone https://github.com/HandBrake/HandBrake.git \
     && cd HandBrake \
     && git fetch --tags
 WORKDIR /build/HandBrake
 
-# Checkout the newest stable semantic-versioned release, regardless of its
-# major or minor version. sort -V handles versions such as 1.10.2 correctly.
-RUN latest_tag="$(git tag -l | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)" \
-    && test -n "${latest_tag}" \
-    && git checkout "${latest_tag}"
+# Checkout the stable release selected by the workflow, or resolve the newest
+# stable release when the build argument was omitted.
+RUN version="${HANDBRAKE_VERSION}" \
+    && if test -z "${version}"; then \
+         version="$(git tag -l | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)"; \
+       fi \
+    && test -n "${version}" \
+    && git checkout "${version}"
 
 # Build
 RUN ./configure --disable-gtk --launch-jobs=$(nproc) --launch
