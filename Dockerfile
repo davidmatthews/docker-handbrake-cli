@@ -37,13 +37,17 @@ RUN apt-get update && apt-get install -y \
 
 WORKDIR /build
 
-# Clone HandBrake source
-RUN git clone https://github.com/HandBrake/HandBrake.git
+# Clone the HandBrake source repository and fetch its release tags.
+RUN git clone https://github.com/HandBrake/HandBrake.git \
+    && cd HandBrake \
+    && git fetch --tags
 WORKDIR /build/HandBrake
 
-# Checkout latest 1.10.x release
-RUN git fetch --tags \
-    && git checkout $(git tag -l | grep -E '^1\.10\.[0-9]+$' | tail -n 1)
+# Checkout the newest stable semantic-versioned release, regardless of its
+# major or minor version. sort -V handles versions such as 1.10.2 correctly.
+RUN latest_tag="$(git tag -l | grep -E '^[0-9]+\.[0-9]+\.[0-9]+$' | sort -V | tail -n 1)" \
+    && test -n "${latest_tag}" \
+    && git checkout "${latest_tag}"
 
 # Build
 RUN ./configure --disable-gtk --launch-jobs=$(nproc) --launch
