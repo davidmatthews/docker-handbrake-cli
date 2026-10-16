@@ -72,15 +72,15 @@ RUN apt-get update && apt-get install -y \
     libass9 \
     libbz2-1.0 \
     libz1 \
-    libvpx9 \
-    libx264-164 \
+    libvpx12 \
+    libx264-165 \
     libopus0 \
     libmp3lame0 \
     libvorbis0a \
     libvorbisenc2 \
-    libtheora0 \
+    libtheora1 \
     libjansson4 \
-    libturbojpeg \
+    libturbojpeg0 \
     libspeex1 \
     ca-certificates \
  && rm -rf /var/lib/apt/lists/*
