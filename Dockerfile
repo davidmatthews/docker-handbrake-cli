@@ -79,6 +79,8 @@ RUN apt-get update && apt-get install -y \
     libvorbis0a \
     libvorbisenc2 \
     libtheora1 \
+    libtheoraenc2 \
+    libtheoradec2 \
     libjansson4 \
     libturbojpeg0 \
     libspeex1 \
