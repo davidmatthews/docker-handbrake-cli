@@ -1,5 +1,5 @@
 # -------- Build stage --------
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:26.04 AS builder
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -61,7 +61,7 @@ RUN ./configure --disable-gtk --launch-jobs=$(nproc) --launch
 RUN ./build/HandBrakeCLI --version
 
 # -------- Runtime stage --------
-FROM ubuntu:24.04
+FROM ubuntu:26.04
 
 ENV DEBIAN_FRONTEND=noninteractive
 
@@ -72,15 +72,17 @@ RUN apt-get update && apt-get install -y \
     libass9 \
     libbz2-1.0 \
     libz1 \
-    libvpx9 \
-    libx264-164 \
+    libvpx12 \
+    libx264-165 \
     libopus0 \
     libmp3lame0 \
     libvorbis0a \
     libvorbisenc2 \
-    libtheora0 \
+    libtheora1 \
+    libtheoraenc2 \
+    libtheoradec2 \
     libjansson4 \
-    libturbojpeg \
+    libturbojpeg0 \
     libspeex1 \
     ca-certificates \
  && rm -rf /var/lib/apt/lists/*
